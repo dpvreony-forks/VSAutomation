@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Automation;
 using System.Linq;
 using System.Collections.Generic;
@@ -12,6 +13,22 @@ namespace VSAutomation
         public MenuItem(AutomationElement menuItem)
         {
             this.menuItem = menuItem;
+
+            //Items = new MenuItemCollection(menuItem);
+        }
+
+        //public MenuItemCollection Items { get; private set; }
+
+        public IList<MenuItem> Items
+        {
+            get
+            {
+                var items = menuItem.FindAll(
+                    TreeScope.Children,
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.MenuItem));
+
+                return items.OfType<AutomationElement>().Select(item => new MenuItem(item)).ToList();
+            }
         }
 
         public string Text 
@@ -21,7 +38,6 @@ namespace VSAutomation
                 return menuItem.GetCurrentPropertyValue(AutomationElement.NameProperty) as string;
             }
         }
-
 
         public void Click()
         {
@@ -39,28 +55,8 @@ namespace VSAutomation
                 else
                     expandCollapsePattern.Collapse();
             }
-        }
 
-        public MenuItem SubMenuItem(string text)
-        {
-            object pattern;
-
-            if (menuItem.TryGetCurrentPattern(ExpandCollapsePattern.Pattern, out pattern))
-            {
-                var expandCollapsePattern = pattern as ExpandCollapsePattern;
-
-                if (expandCollapsePattern.Current.ExpandCollapseState == ExpandCollapseState.Collapsed)
-                    expandCollapsePattern.Expand();
-
-                var aeSubMenuItem = menuItem.FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.NameProperty, text));
-
-                if (aeSubMenuItem == null)
-                    return null;
-                else
-                    return new MenuItem(aeSubMenuItem);
-            }
-            else
-                throw new Exception("The menu item has no submenu");
+            Thread.Sleep(1000);
         }
     }
 }

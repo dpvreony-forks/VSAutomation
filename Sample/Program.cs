@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -23,6 +24,8 @@ namespace VSAutomation
             }
 
             Console.WriteLine();
+            if (Debugger.IsAttached)
+                Console.ReadLine();
         }
     }
 }
