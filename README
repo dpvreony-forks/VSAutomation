@@ -1,0 +1,3 @@
+This was an experimental spike to investigate building an OSS automation library for testing Visual Studio. The team decided not to go with the approach, so it's kept here for historical purposes.
+
+(The spike code is in the `spike` branch.)
